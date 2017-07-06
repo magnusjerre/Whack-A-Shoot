@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 
 public class MJNetworkManager : NetworkManager {
 
+    public GameObject playerVRPrefab, playerNVRPrefab;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -33,6 +35,19 @@ public class MJNetworkManager : NetworkManager {
             canvas.OnClientError();
         }
         base.OnClientError(conn, errorCode);
+    }
+
+    public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
+    {
+        string hostAddress = "localClient";
+        GameObject player;
+        if (!conn.address.Equals(hostAddress)) {
+            player = GameObject.Instantiate(playerNVRPrefab);
+        } else {
+            player = GameObject.Instantiate(playerVRPrefab);
+        }
+
+        NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
     }
 
 }
