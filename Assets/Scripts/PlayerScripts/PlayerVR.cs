@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-[RequireComponent(typeof (LineRenderer))]
 public class PlayerVR : NetworkBehaviour {
 
-	private LineRenderer lineRenderer;
+	private ShotRendererPool shotRendererPool;
 	private PlayerHand playerHand;
 
 	private LayerMask shootingMask;
@@ -14,8 +13,7 @@ public class PlayerVR : NetworkBehaviour {
 	private ParticleSystemPool particlePool;
 
 	void Start () {
-		lineRenderer = GetComponent<LineRenderer>();
-		lineRenderer.enabled = false;
+		shotRendererPool = GameObject.FindObjectOfType<ShotRendererPool>();
 
 		playerHand = GameObject.FindObjectOfType<PlayerHand>();
 		shootingMask = LayerMask.NameToLayer("Shootable");
@@ -58,22 +56,13 @@ public class PlayerVR : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcShowFire(Vector3 start, Vector3 end) {
-		lineRenderer.SetPositions(new Vector3[]{
-			start, end
-		});
-		lineRenderer.enabled = true;
-		Debug.Log("RpcShowFire");
+		shotRendererPool.GetShotRenderer().Show(start, end);
 	}
 
 	[ClientRpc]
 	public void RpcShowHitFire(Vector3 start, NetworkInstanceId netId, Vector3 centerOffset) {
-		Debug.Log("RpcShowHitFire");
-		
 		Target target = GetTargetById(netId);
-		lineRenderer.SetPositions(new Vector3[]{
-			start, target.Center.position + centerOffset
-		});
-		lineRenderer.enabled = true;
+		shotRendererPool.GetShotRenderer().Show(start, target.Center.position + centerOffset);
 		ParticleSystem ps = particlePool.GetParticleSystem();
 		if (ps != null) {
 			ps.transform.position = target.Center.position + centerOffset;
