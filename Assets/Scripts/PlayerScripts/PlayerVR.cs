@@ -11,18 +11,14 @@ public class PlayerVR : NetworkBehaviour {
 
 	private LayerMask shootingMask;
 
-	private Target[] allTargets;
-
 	private ParticleSystemPool particlePool;
 
 	void Start () {
 		lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.enabled = false;
 
-		// GameObject.FindObjectOfType<PlayerHand>().SetPlayerVR(this);
 		playerHand = GameObject.FindObjectOfType<PlayerHand>();
 		shootingMask = LayerMask.NameToLayer("Shootable");
-		allTargets = GameObject.FindObjectsOfType<Target>();
 		particlePool = GameObject.FindObjectOfType<ParticleSystemPool>();
 	}
 
@@ -48,7 +44,8 @@ public class PlayerVR : NetworkBehaviour {
             {
                 Vector3 offset = hitInfo.point - hitTarget.Center.position;
                 RpcShowHitFire(start, hitTarget.GetNetId(), offset);
-				hitTarget.CmdSetIsUp(false);
+				hitTarget.RpcHideTargetForDestruction();
+				hitTarget.CmdRegisterHitDestroyAfterTime();
             }
         }
         else
@@ -71,6 +68,7 @@ public class PlayerVR : NetworkBehaviour {
 	[ClientRpc]
 	public void RpcShowHitFire(Vector3 start, NetworkInstanceId netId, Vector3 centerOffset) {
 		Debug.Log("RpcShowHitFire");
+		
 		Target target = GetTargetById(netId);
 		lineRenderer.SetPositions(new Vector3[]{
 			start, target.Center.position + centerOffset
@@ -84,6 +82,7 @@ public class PlayerVR : NetworkBehaviour {
 	}
 
 	private Target GetTargetById(NetworkInstanceId netId) {
+		Target[] allTargets = GameObject.FindObjectsOfType<Target>();
 		foreach (Target target in allTargets) {			
 			if (target.GetNetId().Equals(netId)) {
 				return target;

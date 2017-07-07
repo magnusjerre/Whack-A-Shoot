@@ -48,7 +48,7 @@ public class Rotator : MonoBehaviour
     public void SetOriginRotation()
     {
         originRotation = transform.rotation;
-        targetRotation = Quaternion.Euler(originRotation.eulerAngles + rotationAxis * rotationAmount);
+        targetRotation = Quaternion.Euler(originRotation.eulerAngles + transform.right * rotationAmount);
     }
 
     public void RotateToTarget(float animationTime)
