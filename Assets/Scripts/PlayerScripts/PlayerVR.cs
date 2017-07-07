@@ -45,6 +45,7 @@ public class PlayerVR : NetworkBehaviour {
             {
                 Vector3 offset = hitInfo.point - hitTarget.Center.position;
                 RpcShowHitFire(start, hitTarget.id, offset);
+				hitTarget.CmdSetIsUp(false);
             }
         }
         else
@@ -72,7 +73,7 @@ public class PlayerVR : NetworkBehaviour {
 			start, target.Center.position + centerOffset
 		});
 		lineRenderer.enabled = true;
-		target.RegisterHit();
+		target.RpcAnimateHit();
 	}
 
 	private Target GetTargetById(int id) {

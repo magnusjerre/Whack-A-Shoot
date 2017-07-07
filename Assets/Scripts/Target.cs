@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class Target : MonoBehaviour {
+[RequireComponent(typeof (Rotator))]
+public class Target : NetworkBehaviour {
 
 
 	[SerializeField]
@@ -11,16 +13,25 @@ public class Target : MonoBehaviour {
 
 	public int id;
 
+	[SyncVar(hook = "ChangeIsUpTo")]
 	public bool IsUp;
 
 	private ParticleSystem ps;
 	[SerializeField]
 	private GameObject targetModel;
 
-	// Use this for initialization
+	private Rotator rotator;
+
 	void Start () {
 		ps = GetComponentInChildren<ParticleSystem>();
-		ShowTarget();
+		
+		rotator = GetComponent<Rotator>();
+		//Want to set the target to be lying down at first
+		transform.rotation = rotator.TargetRotation;	
+		rotator.rotationAmount = -rotator.rotationAmount;
+		rotator.SetOriginRotation();
+
+		CmdSetIsUp(true);
 	}
 
 	public void RegisterHit() {
@@ -29,9 +40,25 @@ public class Target : MonoBehaviour {
 		ps.Play();
 	}
 
-	public void ShowTarget() {
-		IsUp = true;
-		targetModel.SetActive(true);
-		ps.Stop();
+	[Command]
+	public void CmdSetIsUp(bool newValue) {
+		Debug.Log("SetIsUp");
+		this.IsUp = newValue;
+		// ChangeIsUpTo(newValue);
+	}
+
+	[ClientRpc]
+	public void RpcAnimateHit() {
+		ps.Play();
+	}
+
+	public void ChangeIsUpTo(bool newValue) {
+		Debug.Log("ChangeIsUpTo");
+		if (newValue) {
+			rotator.RotateToTarget();
+		} else {
+			rotator.RotateToOrigin();
+		}
+		this.IsUp = newValue;
 	}
 }
