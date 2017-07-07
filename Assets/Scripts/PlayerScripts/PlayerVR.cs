@@ -13,6 +13,8 @@ public class PlayerVR : NetworkBehaviour {
 
 	private Target[] allTargets;
 
+	private ParticleSystemPool particlePool;
+
 	void Start () {
 		lineRenderer = GetComponent<LineRenderer>();
 		lineRenderer.enabled = false;
@@ -21,6 +23,7 @@ public class PlayerVR : NetworkBehaviour {
 		playerHand = GameObject.FindObjectOfType<PlayerHand>();
 		shootingMask = LayerMask.NameToLayer("Shootable");
 		allTargets = GameObject.FindObjectsOfType<Target>();
+		particlePool = GameObject.FindObjectOfType<ParticleSystemPool>();
 	}
 
 	void Update() {
@@ -73,7 +76,11 @@ public class PlayerVR : NetworkBehaviour {
 			start, target.Center.position + centerOffset
 		});
 		lineRenderer.enabled = true;
-		target.RpcAnimateHit();
+		ParticleSystem ps = particlePool.GetParticleSystem();
+		if (ps != null) {
+			ps.transform.position = target.Center.position + centerOffset;
+			ps.Play();
+		}
 	}
 
 	private Target GetTargetById(int id) {
