@@ -8,6 +8,7 @@ public class TargetGroup : MonoBehaviour {
 	[SerializeField]
 	private int targetGroupId;
 	public int TargetGroupId { get { return targetGroupId; } }
+	public float lifetime;
 
 	// Use this for initialization
 	void Start () {

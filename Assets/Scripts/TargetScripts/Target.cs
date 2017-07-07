@@ -16,10 +16,24 @@ public class Target : NetworkBehaviour {
 	private GameObject targetModel;
 
 	private NetworkIdentity networkIdentity;
+	public float lifetime;
+	private float elapsedTime;
 
 	void Start () {
 		ps = GetComponentInChildren<ParticleSystem>();
 		networkIdentity = GetComponent<NetworkIdentity>();
+	}
+
+	void Update() {
+		if (!isServer) {
+			return;
+		}
+
+		elapsedTime += Time.deltaTime;
+		if (elapsedTime >= lifetime) {
+			RpcHideTargetForDestruction();
+			CmdRegisterHitDestroyAfterTime();
+		}
 	}
 
 	[Command]

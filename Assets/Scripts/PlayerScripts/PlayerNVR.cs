@@ -47,6 +47,7 @@ public class PlayerNVR : NetworkBehaviour
         var newTarget = Instantiate(targetGroup.targetPrefab);
         newTarget.transform.position = position;
         newTarget.transform.LookAt(Vector3.zero, Vector3.up);
+        newTarget.lifetime = targetGroup.lifetime;
         NetworkServer.Spawn(newTarget.gameObject);
     }
 
