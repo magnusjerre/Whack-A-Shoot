@@ -47,7 +47,7 @@ public class PlayerVR : NetworkBehaviour {
             if (hitTarget != null)
             {
                 Vector3 offset = hitInfo.point - hitTarget.Center.position;
-                RpcShowHitFire(start, hitTarget.id, offset);
+                RpcShowHitFire(start, hitTarget.GetNetId(), offset);
 				hitTarget.CmdSetIsUp(false);
             }
         }
@@ -69,9 +69,9 @@ public class PlayerVR : NetworkBehaviour {
 	}
 
 	[ClientRpc]
-	public void RpcShowHitFire(Vector3 start, int targetId, Vector3 centerOffset) {
+	public void RpcShowHitFire(Vector3 start, NetworkInstanceId netId, Vector3 centerOffset) {
 		Debug.Log("RpcShowHitFire");
-		Target target = GetTargetById(targetId);
+		Target target = GetTargetById(netId);
 		lineRenderer.SetPositions(new Vector3[]{
 			start, target.Center.position + centerOffset
 		});
@@ -83,9 +83,9 @@ public class PlayerVR : NetworkBehaviour {
 		}
 	}
 
-	private Target GetTargetById(int id) {
-		foreach (Target target in allTargets) {
-			if (target.id == id) {
+	private Target GetTargetById(NetworkInstanceId netId) {
+		foreach (Target target in allTargets) {			
+			if (target.GetNetId().Equals(netId)) {
 				return target;
 			}
 		}

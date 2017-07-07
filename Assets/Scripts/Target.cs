@@ -11,8 +11,6 @@ public class Target : NetworkBehaviour {
 	private Transform center;
 	public Transform Center { get { return center; } }
 
-	public int id;
-
 	[SyncVar(hook = "ChangeIsUpTo")]
 	public bool IsUp;
 
@@ -22,8 +20,11 @@ public class Target : NetworkBehaviour {
 
 	private Rotator rotator;
 
+	private NetworkIdentity networkIdentity;
+
 	void Start () {
 		ps = GetComponentInChildren<ParticleSystem>();
+		networkIdentity = GetComponent<NetworkIdentity>();
 		
 		rotator = GetComponent<Rotator>();
 		//Want to set the target to be lying down at first
@@ -60,5 +61,9 @@ public class Target : NetworkBehaviour {
 			rotator.RotateToOrigin();
 		}
 		this.IsUp = newValue;
+	}
+
+	public NetworkInstanceId GetNetId() {
+		return networkIdentity.netId;
 	}
 }
