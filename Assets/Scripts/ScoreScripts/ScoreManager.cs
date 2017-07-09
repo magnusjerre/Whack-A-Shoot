@@ -46,7 +46,7 @@ public class ScoreManager : NetworkBehaviour
     [Command]
     public void CmdNotifyTargetDestroyed(TargetHitInfo hitInfo, NetworkInstanceId shooterId)
     {
-        int shooterPoints = (int)Mathf.Clamp((int)(hitInfo.maxPoints * (1 - hitInfo.elapsedTime / hitInfo.lifetime) * hitInfo.precision), 0, hitInfo.maxPoints);
+        int shooterPoints = (int)Mathf.Clamp((int)(hitInfo.maxPoints * (1 - hitInfo.elapsedTime / hitInfo.lifetime) * hitInfo.precision), 1, hitInfo.maxPoints);
         int ownerPoints = hitInfo.maxPoints - shooterPoints;
 
         var shooterScore = GetPlayerScore(shooterId);
