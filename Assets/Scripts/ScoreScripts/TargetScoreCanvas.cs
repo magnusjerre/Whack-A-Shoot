@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class ScoreCanvas : MonoBehaviour
+public class TargetScoreCanvas : MonoBehaviour
 {
 
     private Text text;

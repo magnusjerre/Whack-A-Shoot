@@ -2,21 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class ScoreManager : NetworkBehaviour
 {
     private List<PlayerScore> playerScores;
-    private List<ScoreCanvas> scoreCanvases;
+    private List<TargetScoreCanvas> scoreCanvases;
 
-    public ScoreCanvas scoreCanvasPrefab;
+    public TargetScoreCanvas scoreCanvasPrefab;
 
     public NetworkInstanceId playerId;
     public bool IsVrPlayer { get; set; }
 
+    private Text playerTotalScoreText;
+
     void Start()
     {
         playerScores = new List<PlayerScore>();
-        scoreCanvases = new List<ScoreCanvas>();
+        scoreCanvases = new List<TargetScoreCanvas>();
         for (int i = 0; i < 10; i++)
         {
             var canvas = Instantiate(scoreCanvasPrefab);
@@ -25,12 +28,18 @@ public class ScoreManager : NetworkBehaviour
             canvas.Hide();
             scoreCanvases.Add(canvas);
         }
+
+        playerTotalScoreText = GameObject.FindGameObjectWithTag("PlayerTotalScoreText").GetComponent<Text>();
+        playerTotalScoreText.text = "0";
     }
 
     [Command]
     public void CmdNotifyTargetLifetimeExpired(NetworkInstanceId ownerId, NetworkInstanceId targetId, int targetMaxPoints)
     {
-        GetPlayerScore(ownerId).Increase(targetMaxPoints);
+
+        var playerScore = GetPlayerScore(ownerId);
+        playerScore.Increase(targetMaxPoints);
+        RpcUpdatePlayerTotalScore(ownerId, playerScore.TotalScore);
         RpcShowScoreForPlayer(ownerId, targetId, targetMaxPoints, targetMaxPoints);
     }
 
@@ -40,8 +49,13 @@ public class ScoreManager : NetworkBehaviour
         int shooterPoints = (int)Mathf.Clamp((int)(hitInfo.maxPoints * (1 - hitInfo.elapsedTime / hitInfo.lifetime) * hitInfo.precision), 0, hitInfo.maxPoints);
         int ownerPoints = hitInfo.maxPoints - shooterPoints;
 
-        GetPlayerScore(shooterId).Increase(shooterPoints);
-        GetPlayerScore(hitInfo.ownerId).Increase(ownerPoints);
+        var shooterScore = GetPlayerScore(shooterId);
+        shooterScore.Increase(shooterPoints);
+        RpcUpdatePlayerTotalScore(shooterId, shooterScore.TotalScore);
+
+        var ownerScore = GetPlayerScore(hitInfo.ownerId);
+        ownerScore.Increase(ownerPoints);
+        RpcUpdatePlayerTotalScore(hitInfo.ownerId, ownerScore.TotalScore);
 
         RpcShowScoreForPlayer(shooterId, hitInfo.targetId, shooterPoints, hitInfo.maxPoints);
         RpcShowScoreForPlayer(hitInfo.ownerId, hitInfo.targetId, ownerPoints, hitInfo.maxPoints);
@@ -51,7 +65,7 @@ public class ScoreManager : NetworkBehaviour
     {
         foreach (PlayerScore playerScore in playerScores)
         {
-            if (playerScore.Equals(playerId))
+            if (playerScore.PlayerId.Equals(playerId))
             {
                 return playerScore;
             }
@@ -74,7 +88,7 @@ public class ScoreManager : NetworkBehaviour
         }
     }
 
-    private ScoreCanvas GetScoreCanvas()
+    private TargetScoreCanvas GetScoreCanvas()
     {
         foreach (var canvas in scoreCanvases)
         {
@@ -88,5 +102,14 @@ public class ScoreManager : NetworkBehaviour
         newCanvas.transform.SetParent(transform, false);
         scoreCanvases.Add(newCanvas);
         return newCanvas;
+    }
+
+    [ClientRpc]
+    public void RpcUpdatePlayerTotalScore(NetworkInstanceId playerId, int newScore)
+    {
+        if (this.playerId.Equals(playerId))
+        {
+            playerTotalScoreText.text = newScore.ToString();
+        }
     }
 }
