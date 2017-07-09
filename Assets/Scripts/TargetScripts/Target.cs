@@ -16,8 +16,12 @@ public class Target : NetworkBehaviour {
 	private GameObject targetModel;
 
 	private NetworkIdentity networkIdentity;
+	public NetworkInstanceId ownerId;
 	public float lifetime;
 	private float elapsedTime;
+	private bool hitRegistered = false;
+
+	public int MaxPoints;
 
 	void Start () {
 		ps = GetComponentInChildren<ParticleSystem>();
@@ -25,12 +29,14 @@ public class Target : NetworkBehaviour {
 	}
 
 	void Update() {
-		if (!isServer) {
+		if (!isServer || hitRegistered) {
 			return;
 		}
 
 		elapsedTime += Time.deltaTime;
 		if (elapsedTime >= lifetime) {
+			var scoreManager = GameObject.FindObjectOfType<ScoreManager>();
+			scoreManager.CmdNotifyTargetLifetimeExpired(ownerId, GetNetId(), MaxPoints);
 			RpcHideTargetForDestruction();
 			CmdRegisterHitDestroyAfterTime();
 		}
@@ -38,6 +44,7 @@ public class Target : NetworkBehaviour {
 
 	[Command]
 	public void CmdRegisterHitDestroyAfterTime() {
+		hitRegistered = true;
 		Destroy(gameObject, 1f);
 	}
 
@@ -48,5 +55,9 @@ public class Target : NetworkBehaviour {
 
 	public NetworkInstanceId GetNetId() {
 		return networkIdentity.netId;
+	}
+
+	public TargetHitInfo CreateHitInfo(Vector3 offset) {
+		return new TargetHitInfo(elapsedTime, lifetime, 1f, MaxPoints, GetNetId(), ownerId);
 	}
 }

@@ -12,6 +12,8 @@ public class PlayerVR : NetworkBehaviour {
 
 	private ParticleSystemPool particlePool;
 
+	private ScoreManager scoreManager;
+
 	void Start () {
 		shotRendererPool = GameObject.FindObjectOfType<ShotRendererPool>();
 
@@ -19,6 +21,19 @@ public class PlayerVR : NetworkBehaviour {
 		shootingMask = LayerMask.NameToLayer("Shootable");
 		particlePool = GameObject.FindObjectOfType<ParticleSystemPool>();
 	}
+
+	public override void OnStartLocalPlayer()
+    {
+        scoreManager = GameObject.FindObjectOfType<ScoreManager>();
+        if (scoreManager == null)
+        {
+            Debug.Log("Score doesn't exist at this time");
+            return;
+        }
+
+        scoreManager.playerId = GetComponent<NetworkIdentity>().netId;
+		scoreManager.IsVrPlayer = true;
+    }
 
 	void Update() {
 		if (!hasAuthority) {
@@ -41,10 +56,20 @@ public class PlayerVR : NetworkBehaviour {
             if (hitTarget != null)
             {
                 Vector3 offset = hitInfo.point - hitTarget.Center.position;
+				TargetHitInfo targetHitInfo = hitTarget.CreateHitInfo(offset);
                 RpcShowHitFire(start, hitTarget.GetNetId(), offset);
 				hitTarget.RpcHideTargetForDestruction();
 				hitTarget.CmdRegisterHitDestroyAfterTime();
+
+				scoreManager.CmdNotifyTargetDestroyed(
+					targetHitInfo,
+					GetComponent<NetworkIdentity>().netId
+				);
             }
+			else 
+			{
+				RpcShowFire(start, end);
+			}
         }
         else
         {

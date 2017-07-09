@@ -19,7 +19,19 @@ public class PlayerNVR : NetworkBehaviour
         lastRay = new Ray(Vector3.zero, Vector3.up);
         camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         targetGroupLayerMask = LayerMask.NameToLayer("TargetGroup");
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        var scoreManager = GameObject.FindObjectOfType<ScoreManager>();
+        if (scoreManager == null)
+        {
+            Debug.Log("Score doesn't exist at this time");
+            return;
+        }
+
         networkIdentity = GetComponent<NetworkIdentity>();
+        scoreManager.playerId = networkIdentity.netId;
     }
 
     // Update is called once per frame
@@ -42,12 +54,14 @@ public class PlayerNVR : NetworkBehaviour
     }
 
     [Command]
-    public void CmdSpawnTarget(int targetGroupId, Vector3 position, NetworkInstanceId owner) {
+    public void CmdSpawnTarget(int targetGroupId, Vector3 position, NetworkInstanceId ownerId) {
         var targetGroup = GetTargetGroupById(targetGroupId);
         var newTarget = Instantiate(targetGroup.targetPrefab);
         newTarget.transform.position = position;
         newTarget.transform.LookAt(Vector3.zero, Vector3.up);
         newTarget.lifetime = targetGroup.lifetime;
+        newTarget.ownerId = ownerId;
+        newTarget.MaxPoints = targetGroup.maxScorePerTarget;
         NetworkServer.Spawn(newTarget.gameObject);
     }
 

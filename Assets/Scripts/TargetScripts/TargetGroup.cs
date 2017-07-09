@@ -10,6 +10,8 @@ public class TargetGroup : MonoBehaviour {
 	public int TargetGroupId { get { return targetGroupId; } }
 	public float lifetime;
 
+	public int maxScorePerTarget;
+
 	// Use this for initialization
 	void Start () {
 		
