@@ -44,7 +44,7 @@ public class MJNetworkManager : NetworkManager {
         if (!conn.address.Equals(hostAddress)) {
             player = GameObject.Instantiate(playerNVRPrefab);
         } else {
-            player = GameObject.Instantiate(playerVRPrefab);
+            player = GameObject.Instantiate(playerNVRPrefab);
         }
 
         NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);

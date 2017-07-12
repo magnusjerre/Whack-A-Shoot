@@ -1,6 +1,7 @@
+using System;
 using UnityEngine.Networking;
 
-public class PlayerScore
+public class PlayerScore : IComparable<PlayerScore>
 {
     private NetworkInstanceId playerId;
     public NetworkInstanceId PlayerId { get { return playerId; } }
@@ -16,5 +17,13 @@ public class PlayerScore
     {
         totalScore += amount;
     }
+
+    public int CompareTo(PlayerScore other) {
+		return TotalScore - other.TotalScore; //More points means a better position
+    }
+
+	public void SetTotalScore(int totalScore) {
+		this.totalScore = totalScore;
+	}
 
 }

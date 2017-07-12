@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class ScoreManager : NetworkBehaviour
 {
     private List<PlayerScore> playerScores;
+	public List<PlayerScore> PlayerScores { get { return playerScores; } }
+
     private List<TargetScoreCanvas> scoreCanvases;
 
     public TargetScoreCanvas scoreCanvasPrefab;
@@ -107,7 +109,9 @@ public class ScoreManager : NetworkBehaviour
     [ClientRpc]
     public void RpcUpdatePlayerTotalScore(NetworkInstanceId playerId, int newScore)
     {
-        if (this.playerId.Equals(playerId))
+		GetPlayerScore (playerId).SetTotalScore (newScore);
+		Debug.Log ("RpcUpdatePlayerScore, set the score for " + playerId + " to " + newScore);
+		if (this.playerId.Equals(playerId))
         {
             playerTotalScoreText.text = newScore.ToString();
         }

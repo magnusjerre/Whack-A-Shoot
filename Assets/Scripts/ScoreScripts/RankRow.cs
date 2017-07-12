@@ -12,16 +12,14 @@ public class RankRow : MonoBehaviour {
 	public FontStyle fontStyle = FontStyle.Normal;
 
 	void Awake() {
-		for (var i = 0; i < transform.childCount; i++) {
-			var textChild = transform.GetChild(i).GetComponent<Text>();
-			if (textChild != null) {
-				if (textChild.name.Equals("Rank")) {
-					rank = textChild;
-				} else if (textChild.name.Equals("PlayerName")) {
-					playername = textChild;
-				} else if (textChild.name.Equals("PlayerScore")) {
-					playerscore = textChild;
-				}
+		var textChildren = transform.GetComponentsInChildren<Text> ();
+		foreach (var textChild in textChildren) {
+			if (textChild.name.Equals("Rank")) {
+				rank = textChild;
+			} else if (textChild.name.Equals("PlayerName")) {
+				playername = textChild;
+			} else if (textChild.name.Equals("PlayerScore")) {
+				playerscore = textChild;
 			}
 		}
 	}
@@ -30,6 +28,12 @@ public class RankRow : MonoBehaviour {
 		SetColor(textColor);
 		SetFontSize(fontSize);
 		SetFontStyle(fontStyle);
+	}
+
+	public void Set(string rank, string playername, string playerscore) {
+		this.rank.text = rank;
+		this.playername.text = playername;
+		this.playerscore.text = playerscore;
 	}
 	
 	public void Set(int rank, string playername, int score) {
