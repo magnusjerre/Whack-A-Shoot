@@ -20,7 +20,7 @@ public class GameController : NetworkBehaviour {
 	void Update () {
 		if (IsGamePlaying) {
 			timeLeftInGame -= Time.deltaTime;
-			int intCast = (int) timeLeftInGame;
+			int intCast = (int) Mathf.Ceil(timeLeftInGame);
 			if (intCast != gameState.TimeLeft) {
 				gameState.CmdSetTimeLeft(intCast);
 			}
