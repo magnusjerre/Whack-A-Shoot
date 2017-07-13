@@ -13,12 +13,19 @@ public class PlayerNVR : NetworkBehaviour
     LayerMask targetGroupLayerMask;
     private NetworkIdentity networkIdentity;
 
+	public float minTimeBetweenTargetPlacements, maxTimeBetweenTargetPlacements;
+	private float elapsedTimeSinceLastPlacement;
+
+	public ProgressBar minTimeProgressBar, maxTimeProgressBar;
+
     // Use this for initialization
     void Start()
     {
         lastRay = new Ray(Vector3.zero, Vector3.up);
         camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         targetGroupLayerMask = LayerMask.NameToLayer("TargetGroup");
+		minTimeProgressBar = GameObject.FindGameObjectWithTag ("MinTimeProgress").GetComponent<ProgressBar> ();
+		maxTimeProgressBar = GameObject.FindGameObjectWithTag ("MaxTimeProgress").GetComponent<ProgressBar> ();
     }
 
     public override void OnStartLocalPlayer()
@@ -47,11 +54,29 @@ public class PlayerNVR : NetworkBehaviour
             if (Physics.Raycast(ray, out hit, 100f, ~targetGroupLayerMask.value)) {
                 TargetGroup targetGroup = hit.collider.GetComponent<TargetGroup>();
                 if (targetGroup != null) {
-                    CmdSpawnTarget(targetGroup.TargetGroupId, hit.point, networkIdentity.netId);        
+                    SpawnTarget(targetGroup.TargetGroupId, hit.point, networkIdentity.netId);        
                 }
             }   
         }
+
+		elapsedTimeSinceLastPlacement += Time.deltaTime;
+		if (elapsedTimeSinceLastPlacement >= maxTimeBetweenTargetPlacements) {
+			elapsedTimeSinceLastPlacement = 0f;
+			//Need functionality to auto place target
+		}
+
+		minTimeProgressBar.SetProgress (elapsedTimeSinceLastPlacement / minTimeBetweenTargetPlacements);
+		maxTimeProgressBar.SetProgress (elapsedTimeSinceLastPlacement / maxTimeBetweenTargetPlacements);
+
     }
+
+	private void SpawnTarget(int targetGroupId, Vector3 position, NetworkInstanceId ownerId) {
+		if (elapsedTimeSinceLastPlacement < minTimeBetweenTargetPlacements) {
+			return;
+		}
+		elapsedTimeSinceLastPlacement = 0f;
+		CmdSpawnTarget (targetGroupId, position, ownerId);
+	}
 
     [Command]
     public void CmdSpawnTarget(int targetGroupId, Vector3 position, NetworkInstanceId ownerId) {

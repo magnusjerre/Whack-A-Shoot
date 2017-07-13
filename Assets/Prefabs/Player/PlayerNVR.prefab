@@ -54,6 +54,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amount: 1
+  minTimeBetweenTargetPlacements: 1
+  maxTimeBetweenTargetPlacements: 4
+  minTimeProgressBar: {fileID: 0}
+  maxTimeProgressBar: {fileID: 0}
 --- !u!114 &114723453239022068
 MonoBehaviour:
   m_ObjectHideFlags: 1
