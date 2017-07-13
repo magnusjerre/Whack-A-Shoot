@@ -7,18 +7,26 @@ public class GameOverCanvas : MonoBehaviour {
     public RankRow rowPrefab;
     public GameObject rowContainer;
 	private Canvas canvas;
+	private Rotator rotator;
 
 	void Start () {
 		canvas = rowContainer.GetComponentInParent<Canvas> ();
-		canvas.enabled = false;
+		rotator = GetComponent<Rotator> ();
+		Hide ();
 	}
 
 	public void Show() {
 		canvas.enabled = true;
+		if (rotator != null) {
+			rotator.RotateToOrigin (0.25f);
+		}
 	}
 
 	public void Hide() {
 		canvas.enabled = false;
+		if (rotator != null) {
+			rotator.RotateToTarget (0.01f);
+		}
 	}
 
     public void AddScores(List<PlayerScore> scores) {
