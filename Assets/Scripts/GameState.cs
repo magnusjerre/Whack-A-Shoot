@@ -48,4 +48,8 @@ public class GameState : NetworkBehaviour {
     public void CmdSetGameState(GameStateEnum newState) {
         this.state = newState;
     }
+
+	public bool IsGameOver() {
+		return state == GameStateEnum.GAME_OVER;
+	}
 }

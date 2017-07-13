@@ -17,6 +17,7 @@ public class ScoreManager : NetworkBehaviour
     public bool IsVrPlayer { get; set; }
 
     private Text playerTotalScoreText;
+	private GameState gameState;
 
     void Start()
     {
@@ -33,11 +34,15 @@ public class ScoreManager : NetworkBehaviour
 
         playerTotalScoreText = GameObject.FindGameObjectWithTag("PlayerTotalScoreText").GetComponent<Text>();
         playerTotalScoreText.text = "0";
+		gameState = GameObject.FindObjectOfType<GameState> ();
     }
 
     [Command]
     public void CmdNotifyTargetLifetimeExpired(NetworkInstanceId ownerId, NetworkInstanceId targetId, int targetMaxPoints)
     {
+		if (gameState.IsGameOver()) {
+			return;
+		}
 
         var playerScore = GetPlayerScore(ownerId);
         playerScore.Increase(targetMaxPoints);
@@ -48,6 +53,10 @@ public class ScoreManager : NetworkBehaviour
     [Command]
     public void CmdNotifyTargetDestroyed(TargetHitInfo hitInfo, NetworkInstanceId shooterId)
     {
+		if (gameState.IsGameOver()) {
+			return;
+		}
+
         int shooterPoints = (int)Mathf.Clamp((int)(hitInfo.maxPoints * (1 - hitInfo.elapsedTime / hitInfo.lifetime) * hitInfo.precision), 1, hitInfo.maxPoints);
         int ownerPoints = hitInfo.maxPoints - shooterPoints;
 
