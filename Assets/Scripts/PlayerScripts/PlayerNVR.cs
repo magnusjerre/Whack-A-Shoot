@@ -61,8 +61,13 @@ public class PlayerNVR : NetworkBehaviour
 
 		elapsedTimeSinceLastPlacement += Time.deltaTime;
 		if (elapsedTimeSinceLastPlacement >= maxTimeBetweenTargetPlacements) {
+			TargetGroup[] groups = GameObject.FindObjectsOfType<TargetGroup> ();
+			int index = Random.Range (0, groups.Length);
+			TargetGroup randomGroup = groups [index];
+			Vector3 randomPosition = randomGroup.GetRandomPositionOnMesh ();
+			SpawnTarget (randomGroup.TargetGroupId, randomPosition, networkIdentity.netId);
+
 			elapsedTimeSinceLastPlacement = 0f;
-			//Need functionality to auto place target
 		}
 
 		minTimeProgressBar.SetProgress (elapsedTimeSinceLastPlacement / minTimeBetweenTargetPlacements);
