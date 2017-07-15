@@ -17,6 +17,7 @@ public class PlayerNVR : NetworkBehaviour
 	private float elapsedTimeSinceLastPlacement;
 
 	public ProgressBar minTimeProgressBar, maxTimeProgressBar;
+	private ToggleCanvasPool toggleCanvasPool;
 
     // Use this for initialization
     void Start()
@@ -26,6 +27,7 @@ public class PlayerNVR : NetworkBehaviour
         targetGroupLayerMask = LayerMask.NameToLayer("TargetGroup");
 		minTimeProgressBar = GameObject.FindGameObjectWithTag ("MinTimeProgress").GetComponent<ProgressBar> ();
 		maxTimeProgressBar = GameObject.FindGameObjectWithTag ("MaxTimeProgress").GetComponent<ProgressBar> ();
+		toggleCanvasPool = GameObject.FindObjectOfType<ToggleCanvasPool> ();
     }
 
     public override void OnStartLocalPlayer()
@@ -77,6 +79,7 @@ public class PlayerNVR : NetworkBehaviour
 
 	private void SpawnTarget(int targetGroupId, Vector3 position, NetworkInstanceId ownerId) {
 		if (elapsedTimeSinceLastPlacement < minTimeBetweenTargetPlacements) {
+			toggleCanvasPool.Get ().Show (new Vector3(position.x, position.y + 0.5f, position.z));
 			return;
 		}
 		elapsedTimeSinceLastPlacement = 0f;
