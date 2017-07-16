@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-[RequireComponent(typeof (Rotator))]
 public class Target : NetworkBehaviour {
 
 
@@ -50,6 +49,10 @@ public class Target : NetworkBehaviour {
 
 	[ClientRpc]
 	public void RpcHideTargetForDestruction() {
+		var childMeshRenderers = GetComponentsInChildren<MeshRenderer> ();
+		foreach (var renderer in childMeshRenderers) {
+			renderer.enabled = false;
+		}
 		targetModel.SetActive(false);
 	}
 
@@ -59,5 +62,17 @@ public class Target : NetworkBehaviour {
 
 	public TargetHitInfo CreateHitInfo(Vector3 offset) {
 		return new TargetHitInfo(elapsedTime, lifetime, 1f, MaxPoints, GetNetId(), ownerId);
+	}
+
+	public void LookAt(Vector3 position) {
+		var winkingComponent = GetComponent<Waving> ();
+		if (winkingComponent != null)
+		{
+			winkingComponent.LookAt (position);
+		}
+		else
+		{
+			transform.LookAt (position, Vector3.up);
+		}
 	}
 }

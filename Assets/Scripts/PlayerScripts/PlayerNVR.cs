@@ -91,7 +91,7 @@ public class PlayerNVR : NetworkBehaviour
         var targetGroup = GetTargetGroupById(targetGroupId);
         var newTarget = Instantiate(targetGroup.targetPrefab);
         newTarget.transform.position = position;
-        newTarget.transform.LookAt(Vector3.zero, Vector3.up);
+        newTarget.LookAt(Vector3.zero);
         newTarget.lifetime = targetGroup.lifetime;
         newTarget.ownerId = ownerId;
         newTarget.MaxPoints = targetGroup.maxScorePerTarget;
