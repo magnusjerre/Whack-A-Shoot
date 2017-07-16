@@ -239,7 +239,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   center: {fileID: 4515834423275920}
   targetModel: {fileID: 1127500316017798}
-  lifetime: 10
+  lifetime: 6
   MaxPoints: 10
 --- !u!114 &114941832845486096
 MonoBehaviour:

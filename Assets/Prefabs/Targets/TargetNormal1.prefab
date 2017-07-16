@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114921699660879746}
   - component: {fileID: 114274253008928186}
   m_Layer: 8
-  m_Name: Target_New2
+  m_Name: TargetNormal1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,7 +116,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: d6a8fca99567d99479909430f08560b9, type: 2}
+  - {fileID: 2100000, guid: e370d6803155b014888e026ea11f7b9d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -170,22 +170,22 @@ MonoBehaviour:
   m_SceneId:
     m_Value: 0
   m_AssetId:
-    i0: 109
-    i1: 150
-    i2: 129
-    i3: 95
-    i4: 22
-    i5: 132
-    i6: 6
-    i7: 36
-    i8: 8
-    i9: 26
-    i10: 99
-    i11: 60
-    i12: 192
-    i13: 104
-    i14: 212
-    i15: 86
+    i0: 26
+    i1: 134
+    i2: 252
+    i3: 143
+    i4: 104
+    i5: 206
+    i6: 157
+    i7: 132
+    i8: 42
+    i9: 29
+    i10: 155
+    i11: 160
+    i12: 133
+    i13: 183
+    i14: 134
+    i15: 43
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
 --- !u!114 &114878080794359870
@@ -200,8 +200,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   center: {fileID: 4318078201180592}
-  IsUp: 0
   targetModel: {fileID: 1706434300111338}
+  lifetime: 0
+  MaxPoints: 0
 --- !u!114 &114921699660879746
 MonoBehaviour:
   m_ObjectHideFlags: 1
