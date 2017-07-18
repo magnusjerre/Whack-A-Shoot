@@ -9,6 +9,7 @@ TagManager:
   - GameOverCanvas
   - MinTimeProgress
   - MaxTimeProgress
+  - Powerup
   layers:
   - Default
   - TransparentFX

@@ -72,6 +72,25 @@ public class TargetScoreCanvas : MonoBehaviour
         elapsedTime = 0f;
     }
 
+	public void Show(string text, Vector3 position, bool isVrPlayer)
+	{
+		transform.position = position;  //Canvas position in world space
+		if (isVrPlayer) {
+			transform.LookAt(transform.position + (transform.position - Vector3.zero) * 5, Vector3.up);
+			calculationScale = initialScale * vrTextScaleFactor;
+		} else {
+			transform.LookAt(transform.position - Vector3.up, Vector3.forward);
+		}
+		transform.localScale = calculationScale;
+
+		this.text.text = text;
+		this.text.color = textColor;
+		showScore = true;
+		this.text.enabled = true;
+		IsAvailable = false;
+		elapsedTime = 0f;
+	}
+
     public void Hide()
     {
         showScore = false;

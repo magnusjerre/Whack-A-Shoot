@@ -72,6 +72,18 @@ public class ScoreManager : NetworkBehaviour
         RpcShowScoreForPlayer(hitInfo.ownerId, hitInfo.targetId, ownerPoints, hitInfo.maxPoints);
     }
 
+	[Command]
+	public void CmdIncreaseScoreBy(int amount, NetworkInstanceId playerId) {
+		if (gameState.IsGameOver()) {
+			return;
+		}
+
+		var playerScore = GetPlayerScore (playerId);
+		playerScore.Increase (amount);
+		RpcUpdatePlayerTotalScore (playerId, playerScore.TotalScore);
+		RpcShowOnlyScoreForPlayer(playerId, amount, new Vector3(0, 1, 0));
+	}
+
     private PlayerScore GetPlayerScore(NetworkInstanceId playerId)
     {
         foreach (PlayerScore playerScore in playerScores)
@@ -125,4 +137,13 @@ public class ScoreManager : NetworkBehaviour
             playerTotalScoreText.text = newScore.ToString();
         }
     }
+
+	[ClientRpc]
+	public void RpcShowOnlyScoreForPlayer(NetworkInstanceId playerId, int score, Vector3 position) {
+		if (this.playerId.Equals(playerId))
+		{
+			var scoreCanvas = GetScoreCanvas ();
+			scoreCanvas.Show (score.ToString (), position, IsVrPlayer);
+		}
+	}
 }
