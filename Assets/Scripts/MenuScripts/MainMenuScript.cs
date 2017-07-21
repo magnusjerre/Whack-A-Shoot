@@ -17,7 +17,7 @@ public class MainMenuScript : MonoBehaviour {
 
 	//NVR Canvas info
 	private InputField nvrIpInput;	//Searched for by looking for a single input field in hierarchy
-	private Button nvrConnectButton;	//Searched for by looking for a single button in hierarchy
+	private Button nvrConnectButton, nvrHostButton;	//Searched for by looking for a single button in hierarchy
 	private Text nvrConnectButtonText;
 	private bool nvrIsConnecting = false;
 
@@ -35,19 +35,35 @@ public class MainMenuScript : MonoBehaviour {
 		} else {
 			nvrStuffInstance = Instantiate(nvrStuffPrefab);
 			nvrIpInput = nvrStuffInstance.GetComponentInChildren<InputField>();
-			nvrConnectButton = nvrStuffInstance.GetComponentInChildren<Button>();
-			nvrConnectButton.onClick.AddListener(delegate { ConnectToHost(); });
-			// nvrConnectButton.onClick.AddListener(delegate { Host(); });
-			nvrConnectButtonText = nvrConnectButton.GetComponentInChildren<Text>();
-			Text[] allTextComponents = nvrStuffInstance.GetComponentsInChildren<Text>();
-			foreach (Text text in allTextComponents) {
-				if (text.name.Equals("MyIPText")) {
-					myIpText = text;
-					myIpText.text = MyIP();
-					break;
-				}
-			}
-		}
+			var buttons = nvrStuffInstance.GetComponentsInChildren<Button>();
+			for (var i = 0; i < buttons.Length; i++)
+            {
+                var button = buttons[i];
+                if (button.name.Contains("Host"))
+                {
+					button.onClick.AddListener(delegate { Host(); });
+					Debug.Log("Host button found");
+                }
+                else if (button.name.Contains("Button"))
+                {
+                    nvrConnectButton = button;
+                    nvrConnectButton.onClick.AddListener(delegate { ConnectToHost(); });
+
+                    nvrConnectButtonText = nvrConnectButton.GetComponentInChildren<Text>();
+                    Text[] allTextComponents = nvrStuffInstance.GetComponentsInChildren<Text>();
+                    foreach (Text text in allTextComponents)
+                    {
+                        if (text.name.Equals("MyIPText"))
+                        {
+                            myIpText = text;
+                            myIpText.text = MyIP();
+                            break;
+                        }
+                    }
+                }
+            }
+
+        }
 		networkManager = GameObject.FindObjectOfType<MJNetworkManager>();		
 	}
 
