@@ -21,8 +21,12 @@ public class GameState : NetworkBehaviour {
 
 	void Start () {
 		timeLeftText = GameObject.FindGameObjectWithTag ("TimeLeftText").GetComponent<Text> ();
-		gameOverCanvas = GameObject.FindGameObjectWithTag ("GameOverCanvas").GetComponent<GameOverCanvas> ();
-		gameOverCanvas.Hide ();
+		var gameOverGameObject = GameObject.FindGameObjectWithTag ("GameOverCanvas");
+		if (gameOverGameObject != null)
+        {
+			gameOverCanvas = gameOverGameObject.GetComponent<GameOverCanvas> ();
+            gameOverCanvas.Hide();
+        }
 	}
 
     [Command]
@@ -38,8 +42,11 @@ public class GameState : NetworkBehaviour {
     private void SyncGameState(GameStateEnum newState) {
 		if (newState == GameStateEnum.GAME_OVER) {
 			var scoreManager = GameObject.FindObjectOfType<ScoreManager> ();
-			gameOverCanvas.AddScores (scoreManager.PlayerScores);
-			gameOverCanvas.Show ();
+			if (gameOverCanvas != null)
+            {
+                gameOverCanvas.AddScores(scoreManager.PlayerScores);
+                gameOverCanvas.Show();
+            }
 		}
         this.state = newState;
     }

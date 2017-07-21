@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.VR;
 
 public class PowerupController : NetworkBehaviour
 {
@@ -27,6 +28,10 @@ public class PowerupController : NetworkBehaviour
 
 	void Start ()
 	{
+
+		if (VRSettings.enabled && VRSettings.isDeviceActive) {
+			return;
+		}
 		powerupIcon = GameObject.FindGameObjectWithTag ("Powerup").GetComponent<Image>();
 		var textChildren = powerupIcon.GetComponentsInChildren<Text> ();
 		foreach (var t in textChildren) 
@@ -48,6 +53,9 @@ public class PowerupController : NetworkBehaviour
 	
 	void Update ()
 	{
+		if (VRSettings.enabled && VRSettings.isDeviceActive) {
+			return;
+		}
 		if (!isPowerupAvailable)
 		{
 			elapsedTime += Time.deltaTime;

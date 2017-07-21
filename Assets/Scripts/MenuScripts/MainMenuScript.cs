@@ -36,8 +36,8 @@ public class MainMenuScript : MonoBehaviour {
 			nvrStuffInstance = Instantiate(nvrStuffPrefab);
 			nvrIpInput = nvrStuffInstance.GetComponentInChildren<InputField>();
 			nvrConnectButton = nvrStuffInstance.GetComponentInChildren<Button>();
-			//nvrConnectButton.onClick.AddListener(delegate { ConnectToHost(); });
-			nvrConnectButton.onClick.AddListener(delegate { Host(); });
+			nvrConnectButton.onClick.AddListener(delegate { ConnectToHost(); });
+			// nvrConnectButton.onClick.AddListener(delegate { Host(); });
 			nvrConnectButtonText = nvrConnectButton.GetComponentInChildren<Text>();
 			Text[] allTextComponents = nvrStuffInstance.GetComponentsInChildren<Text>();
 			foreach (Text text in allTextComponents) {
